@@ -17,7 +17,9 @@ public class TestSmtpApplicationTests {
     @Test
     public void testRegisterDeregister() {
         Assert.assertEquals("Successfully registered", telegramService.register("test@mail.ru", 12L));
+        Assert.assertEquals("Already registered", telegramService.register("test@mail.ru", 12L));
         Assert.assertEquals("Successfully deregistered", telegramService.deregister("test@mail.ru", 12L));
+        Assert.assertEquals("Not registered", telegramService.deregister("test@mail.ru", 12L));
     }
 
 }
