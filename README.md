@@ -16,9 +16,10 @@ This variables can be taken from telegram bot BotFather
 This bot has two commands
 1. /register <e-mail> - Add current chatId to list of chats, which is notified when smtp server receives message addressed this e-mail
 2. /deregister <email> - Remove current chatId from list (par.1)
+  
 E-mails and chatIds has many-to-many connection
 # SMTP server
 The application.properties file contains three variables.
-1. smtpserver.enabled - Eabling SMTP server
+1. smtpserver.enabled - Enabling SMTP server
 2. smtpserver.hostName - SMTP server host
 3. smtpserver.port - SMTP server port
