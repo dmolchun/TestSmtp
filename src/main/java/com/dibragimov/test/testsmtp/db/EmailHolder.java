@@ -1,9 +1,8 @@
 package com.dibragimov.test.testsmtp.db;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
-import javax.persistence.*;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,6 @@ public class EmailHolder {
     @Id
     private String email;
     @ElementCollection
-    @Fetch(FetchMode.JOIN)
     private List<Long> chatIdList = new ArrayList<>();
 
     public EmailHolder() {

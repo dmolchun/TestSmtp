@@ -1,6 +1,12 @@
 # TestSmtp
-Application contains SMTP server and Telegram bot realization.\
+Telegram bot with the ability to subscribe / unsubscribe to notifications using the commands
+1. / register email@email.com
+2. / deregister email@email.com
+
+SMTP Server receives incoming mail. Emails sent via this server to e-mail from the list of registered should be send to the telegram chat rooms, which are registered to receive notifications by this e-mail. Telegram messages contains information about the subject, from, to and body of a e-mail.
+
 H2 database is used for data storage
+
 # Telegram bot
 The application.properties file contains two variables.\
 This variables can be taken from telegram bot BotFather
