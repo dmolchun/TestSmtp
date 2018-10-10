@@ -63,7 +63,7 @@ public class TelegramService {
             holder = new EmailHolder(email);
         }
         holder.getChatIdList().add(chatId);
-        emailRepository.save(holder);
+        saveToRepo(holder);
         return "Successfully registered";
     }
 
@@ -77,29 +77,48 @@ public class TelegramService {
             EmailHolder holder = emailRepository.getOneEager(email);
             if (holder.getChatIdList().contains(chatId)) {
                 holder.getChatIdList().remove(chatId);
-                if (holder.getChatIdList().isEmpty()) {
-                    emailRepository.delete(holder);
-                } else {
-                    emailRepository.save(holder);
-                }
+                saveToRepo(holder);
                 return "Successfully deregistered";
             }
         }
         return "Not registered";
     }
 
+    /**
+     * Save EmailHolder to repository
+     * @param holder - holder to save
+     */
+    private void saveToRepo(EmailHolder holder) {
+        if (holder.getChatIdList().isEmpty()) {
+            emailRepository.delete(holder);
+        } else {
+            emailRepository.save(holder);
+        }
+    }
+
+    /**
+     * Send messages for registered Telegram users
+     */
     public void sendMessage(Message message) {
-        if (emailRepository.existsById(message.getTo())) {
-            emailRepository.getOneEager(message.getTo()).getChatIdList().forEach(chatId -> {
-                SendMessage sendMessage = new SendMessage()
-                        .setChatId(chatId)
-                        .setText(message.toTelegramString());
-                try {
-                    emailBot.execute(sendMessage);
-                } catch (TelegramApiException e) {
-                    logger.error("Error sending message for chatId " + chatId, e);
-                }
-            });
+        String toAddress = message.getTo();
+        if (emailRepository.existsById(toAddress)) {
+            String telegramMessage = message.toTelegramString();
+            emailRepository.getOneEager(toAddress).getChatIdList()
+                    .forEach(chatId -> sendMessageToChat(telegramMessage, chatId));
+        }
+    }
+
+    /**
+     * Send message to concrete chat
+     * @param message - string message
+     * @param chatId - Telegram chat Id
+     */
+    private void sendMessageToChat(String message, Long chatId) {
+        SendMessage sendMessage = new SendMessage().setChatId(chatId).setText(message);
+        try {
+            emailBot.execute(sendMessage);
+        } catch (TelegramApiException e) {
+            logger.error("Error sending message for chatId " + chatId, e);
         }
     }
 
