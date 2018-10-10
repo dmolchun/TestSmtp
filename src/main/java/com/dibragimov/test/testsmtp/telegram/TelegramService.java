@@ -14,6 +14,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 import javax.annotation.PostConstruct;
+import java.util.Optional;
 
 /**
  * Service to operate with telegram API
@@ -53,14 +54,9 @@ public class TelegramService {
      * @return sting with result message
      */
     public String register(String email, Long chatId) {
-        EmailHolder holder;
-        if (emailRepository.existsById(email)) {
-            holder = emailRepository.getOneEager(email);
-            if (holder.getChatIdList().contains(chatId)) {
-                return "Already registered";
-            }
-        } else {
-            holder = new EmailHolder(email);
+        EmailHolder holder = Optional.ofNullable(emailRepository.getOneEager(email)).orElse(new EmailHolder(email));
+        if (holder.getChatIdList().contains(chatId)) {
+            return "Already registered";
         }
         holder.getChatIdList().add(chatId);
         saveToRepo(holder);
@@ -73,18 +69,17 @@ public class TelegramService {
      * @return sting with result message
      */
     public String deregister(String email, Long chatId) {
-        if (emailRepository.existsById(email)) {
-            EmailHolder holder = emailRepository.getOneEager(email);
-            if (holder.getChatIdList().removeIf(chatId::equals)){
-                saveToRepo(holder);
-                return "Successfully deregistered";
-            }
+        EmailHolder holder = emailRepository.getOneEager(email);
+        if (holder != null && holder.getChatIdList().removeIf(chatId::equals)) {
+            saveToRepo(holder);
+            return "Successfully deregistered";
         }
         return "Not registered";
     }
 
     /**
      * Save EmailHolder to repository
+     *
      * @param holder - holder to save
      */
     private void saveToRepo(EmailHolder holder) {
@@ -109,8 +104,9 @@ public class TelegramService {
 
     /**
      * Send message to concrete chat
+     *
      * @param message - string message
-     * @param chatId - Telegram chat Id
+     * @param chatId  - Telegram chat Id
      */
     private void sendMessageToChat(String message, Long chatId) {
         SendMessage sendMessage = new SendMessage().setChatId(chatId).setText(message);
