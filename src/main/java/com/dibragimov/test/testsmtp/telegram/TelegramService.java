@@ -75,8 +75,7 @@ public class TelegramService {
     public String deregister(String email, Long chatId) {
         if (emailRepository.existsById(email)) {
             EmailHolder holder = emailRepository.getOneEager(email);
-            if (holder.getChatIdList().contains(chatId)) {
-                holder.getChatIdList().remove(chatId);
+            if (holder.getChatIdList().removeIf(chatId::equals)){
                 saveToRepo(holder);
                 return "Successfully deregistered";
             }

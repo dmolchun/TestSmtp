@@ -3,8 +3,8 @@ package com.dibragimov.test.testsmtp.db;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * JPA holder for email and chatIds info
@@ -14,7 +14,7 @@ public class EmailHolder {
     @Id
     private String email;
     @ElementCollection
-    private List<Long> chatIdList = new ArrayList<>();
+    private Set<Long> chatIdList = new HashSet<>();
 
     public EmailHolder() {
     }
@@ -27,7 +27,7 @@ public class EmailHolder {
         return email;
     }
 
-    public List<Long> getChatIdList() {
+    public Set<Long> getChatIdList() {
         return chatIdList;
     }
 }
